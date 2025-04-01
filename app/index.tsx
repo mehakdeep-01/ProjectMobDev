@@ -1,27 +1,43 @@
-import { StyleSheet, Text, View } from 'react-native';
-import Sign_in from "../components/sign_in";
+import { StyleSheet, View, Button } from "react-native";
+import { useEffect, useState } from "react";
+import SignIn from "../components/sign_in";
+import SignUp from "../components/sign_up";
 import Welcome from "../components/welcome";
-import { useState } from 'react';
-
+import supabase from "../lib/supabase";
 
 export default function App() {
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [showSignUp, setShowSignUp] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkUserSession = async () => {
+      const { data: session } = await supabase.auth.getUser();
+      if (session?.user) {
+        setIsSignedIn(true);
+        setEmail(session.user.email ?? "");
+      }
+    };
+    checkUserSession();
+  }, []);
 
   return (
     <View style={styles.container}>
       {isSignedIn ? (
-        <Welcome 
-          username={username || "Guest"} 
-          city="Unknown" 
-          url="https://example.com" 
-          color="blue" 
-          size={42} 
-        />
+        <Welcome />
+      ) : showSignUp ? (
+        <SignUp setIsSignedIn={setIsSignedIn} />
       ) : (
-        <Sign_in setIsSignedIn={setIsSignedIn} username={username} setUsername={setUsername} />
+        <SignIn setIsSignedIn={setIsSignedIn} email={email} setEmail={setEmail} />
       )}
-      
+      {!isSignedIn && (
+        <View style={styles.toggleContainer}>
+          <Button
+            title={showSignUp ? "Back to Login" : "Create an Account"}
+            onPress={() => setShowSignUp(!showSignUp)}
+          />
+        </View>
+      )}
     </View>
   );
 }
@@ -33,6 +49,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-
+  },
+  toggleContainer: {
+    marginTop: 20,
   },
 });

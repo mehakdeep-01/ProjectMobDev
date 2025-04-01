@@ -1,58 +1,67 @@
 import { useState } from "react";
 import { View, Text, StyleSheet, Button, TextInput, Alert } from "react-native";
-import credentials from "../credentials.json";
+import { supabase } from "../lib/supabase"; // Ensure Supabase is properly initialized
 
 type SignInProps = {
   setIsSignedIn: (isSignedIn: boolean) => void;
-  username: string;
-  setUsername: (username: string) => void;
+  email: string;
+  setEmail: (email: string) => void;
 };
 
-const Sign_in: React.FC<SignInProps> = ({ setIsSignedIn, username, setUsername }) => {
+const SignIn: React.FC<SignInProps> = ({ setIsSignedIn, email, setEmail }) => {
   const [password, setPassword] = useState<string>("");
 
   const validateInput = () => {
-    const usernameValid = username.length >= 5;
-    const passwordValid =
-      password.length >= 8 &&
-      /[A-Z]/.test(password) &&
-      /[a-z]/.test(password) &&
-      /\d/.test(password) &&
-      /[\W_]/.test(password);
-
-    if (!usernameValid) {
-      Alert.alert("Error", "Username must be at least 5 characters long.");
+    if (!email.includes("@")) {
+      Alert.alert("Error", "Please enter a valid email address.");
       return false;
     }
-    if (!passwordValid) {
-      Alert.alert("Error", "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.");
+    if (password.length < 8) {
+      Alert.alert("Error", "Password must be at least 8 characters long.");
       return false;
     }
     return true;
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!validateInput()) return;
 
-    const user = credentials.users.find((user) => user.username === username && user.password === password);
-    if (user) {
-      setIsSignedIn(true);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      Alert.alert("Login failed", error.message);
     } else {
-      Alert.alert("Login failed", "Invalid username or password.");
+      setIsSignedIn(true);
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
-      <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername} />
-      <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
       <Button title="Login" onPress={handleLogin} />
     </View>
   );
 };
 
-export default Sign_in;
+export default SignIn;
 
 const styles = StyleSheet.create({
   container: {

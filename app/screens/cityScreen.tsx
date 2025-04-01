@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   image: {
     width: 350,
     height: 250,
-    marginBottom: 20,
+    
     borderRadius: 10,
   },
   buttonContainer: {
