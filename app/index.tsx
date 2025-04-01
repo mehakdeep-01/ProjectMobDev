@@ -7,7 +7,7 @@ import supabase from "../lib/supabase";
 
 export default function App() {
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("");
+  const [email, setEmail] = useState<string>("mehakdeepkaur02@edu.sait.ca");
   const [showSignUp, setShowSignUp] = useState<boolean>(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       {isSignedIn ? (
-        <Welcome />
+        <Welcome setIsSignedIn={setIsSignedIn}/>
       ) : showSignUp ? (
         <SignUp setIsSignedIn={setIsSignedIn} />
       ) : (

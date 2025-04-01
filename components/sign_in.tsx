@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, Text, StyleSheet, Button, TextInput, Alert } from "react-native";
-import { supabase } from "../lib/supabase"; // Ensure Supabase is properly initialized
+import supabase from "../lib/supabase"; // Ensure Supabase is properly initialized
 
 type SignInProps = {
   setIsSignedIn: (isSignedIn: boolean) => void;
@@ -9,7 +9,7 @@ type SignInProps = {
 };
 
 const SignIn: React.FC<SignInProps> = ({ setIsSignedIn, email, setEmail }) => {
-  const [password, setPassword] = useState<string>("");
+  const [password, setPassword] = useState<string>("Password@123");
 
   const validateInput = () => {
     if (!email.includes("@")) {

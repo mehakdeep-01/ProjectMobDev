@@ -8,7 +8,7 @@ interface CityScreenProps {
   size: number;
 }
 
-const CityScreen: React.FC<CityScreenProps> = ({ city, url, color, size }) => {
+const CityScreen: React.FC<CityScreenProps> = () => {
   const [selectedCity, setSelectedCity] = useState<"Calgary" | "Edmonton">("Calgary");
 
   // City data mapping
@@ -58,7 +58,6 @@ const CityScreen: React.FC<CityScreenProps> = ({ city, url, color, size }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#fff",
@@ -67,27 +66,26 @@ const styles = StyleSheet.create({
   image: {
     width: 350,
     height: 250,
-    
     borderRadius: 10,
   },
   buttonContainer: {
-    marginBottom: 40,
+    marginTop: 20,
+    marginBottom: 20,
+    width: "80%",
   },
   tabsContainer: {
     flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
     marginTop: 20,
   },
   tabButton: {
-    // marginHorizontal: 10,
-    height: 60,
-    width: 200,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    
-    marginTop:350,
+    height: 50,
+    width: 150,
     backgroundColor: "#ddd",
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: 8,
   },
   selectedTab: {
     backgroundColor: "tomato",

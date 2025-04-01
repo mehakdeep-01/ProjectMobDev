@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Button, TextInput, Alert, ActivityIndicator } from "react-native";
-import { supabase } from "../lib/supabase";
+import supabase from "../lib/supabase";
 
 type SignUpProps = {
   setIsSignedIn: (isSignedIn: boolean) => void;
@@ -52,6 +52,8 @@ const SignUp: React.FC<SignUpProps> = ({ setIsSignedIn }) => {
       setLoading(false);
       return;
     }
+
+    console.log("User ID:", userId);
 
     // Insert user details into the user_details table
     const { data, error: dbError } = await supabase
