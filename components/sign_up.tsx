@@ -77,9 +77,9 @@ const SignUp: React.FC<SignUpProps> = ({ setIsSignedIn }) => {
       <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
       <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#6200ee" />
       ) : (
-        <Button title="Sign Up" onPress={handleSignUp} />
+        <Button title="Sign Up" onPress={handleSignUp} color="#6200ee" />
       )}
     </View>
   );
@@ -90,23 +90,32 @@ export default SignUp;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffebcd",
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    paddingHorizontal: 20,
   },
   input: {
-    height: 40,
-    borderColor: "gray",
+    height: 50,
+    borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 10,
-    margin: 5,
-    width: 200,
-    paddingHorizontal: 10,
+    borderRadius: 12,
+    marginVertical: 10,
+    width: "100%",
+    paddingHorizontal: 15,
+    fontSize: 16,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
+    fontSize: 28,
+    fontWeight: "700",
+    marginBottom: 30,
+    color: "#333",
+  },
+  button: {
+    width: "100%",
+    backgroundColor: "#6200ee",
+    paddingVertical: 14,
+    borderRadius: 12,
   },
 });

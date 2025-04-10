@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Button, ActivityIndicator, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, ActivityIndicator } from 'react-native';
 import supabase from '../lib/supabase';
-import CityScreen from '../app/screens/cityScreen';
-import { router, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 type WelcomeProps = {
   setIsSignedIn: (isSignedIn: boolean) => void;
 };
 
-const Welcome: React.FC <WelcomeProps>= ({ setIsSignedIn }) => {
-  const Router = useRouter();
+const Welcome: React.FC<WelcomeProps> = ({ setIsSignedIn }) => {
+  const router = useRouter();
   const [userDetails, setUserDetails] = useState<{ first_name: string; last_name: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
       const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
-      console.log(  JSON.stringify(sessionData));
+      
       if (sessionError || !sessionData?.user) {
         console.error("User not found:", sessionError?.message);
+        setLoading(false);
         return;
       }
 
@@ -27,7 +27,7 @@ const Welcome: React.FC <WelcomeProps>= ({ setIsSignedIn }) => {
         .select('first_name, last_name')
         .eq('uuid', sessionData.user.id)
         .single();
-      console.log(JSON.stringify(data))
+
       if (userError) {
         console.error("Error fetching user details:", userError.message);
       } else {
@@ -39,65 +39,126 @@ const Welcome: React.FC <WelcomeProps>= ({ setIsSignedIn }) => {
     fetchUserData();
   }, []);
 
+  // const handleLogout = async () => {
+  //   const { error } = await supabase.auth.signOut();
+  //   if (error) {
+  //     console.error('Logout error:', error.message);
+  //   } else {
+  //     setIsSignedIn(false);
+  //     router.push('/sign_in');
+  //   }
+  // };
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsSignedIn(false);
-   // router.push('/sign_in'); // Redirect to login page after logout
-    // Handle navigation to Sign-In page (assuming a navigation prop is available)
+    // router.push('/sign_in'); // Redirect to login page after logout
   };
 
-  return (
-    <SafeAreaView style={styles.safeContainer}>
-      <View style={styles.container}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          <>
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>
-                Welcome {userDetails ? `${userDetails.first_name} ${userDetails.last_name}` : "User"} to my app!
-              </Text>
-            </View>
 
-            <CityScreen city="Edmonton" url="https://www.edmonton.ca/" color={''} size={0} />
-
-            <View style={styles.buttonContainer}>
-              <Button title="Logout" onPress={handleLogout} color="red" />
-            </View>
-          </>
-        )}
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
       </View>
-    </SafeAreaView>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.welcomeText}>
+        {userDetails 
+          ? `Welcome, ${userDetails.first_name} ${userDetails.last_name}!`
+          : 'Welcome to Study Planner!'}
+      </Text>
+      
+      <Text style={styles.subtitle}>
+        Your personalized study planner awaits you.
+      </Text>
+       <Image source={require("../assets/logoo.jpg")} style={styles.logo} />
+
+      <View style={styles.buttonWrapper}>
+        <Button 
+          title="Calendar" 
+          onPress={() => router.push('/CalendarScreen')} 
+        />
+      </View>
+
+      <View style={styles.buttonWrapper}>
+        <Button 
+          title="Tasks" 
+          onPress={() => router.push('/TasksScreen')} 
+        />
+      </View>
+
+      <View style={styles.buttonWrapper}>
+        <Button 
+          title="Reminder" 
+          onPress={() => router.push('/RemindersScreen')} 
+        />
+      </View>
+
+      <View style={styles.buttonContainer}>
+              <Button title="Logout" onPress={handleLogout} color="#fff" />
+            </View>
+
+    </View>
   );
 };
-
-export default Welcome;
-
 const styles = StyleSheet.create({
-  safeContainer: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
   container: {
-    flex: 1,
-    justifyContent: 'center', // Centers all content
-    alignItems: 'center',
     padding: 20,
+    backgroundColor: "#ffebcd",
     width: '100%',
+    height: '100%', 
+    flex: 1,
+    justifyContent: 'center',
   },
-  titleContainer: {
-    marginBottom: 20, // Ensures space below the title
-    paddingHorizontal: 10,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  title: {
+  welcomeText: {
     fontSize: 24,
-    fontWeight: 'bold',
     textAlign: 'center',
-    color: '#333',
+    marginBottom: 10,
+    fontWeight: 'bold',
+  },
+  subtitle: {
+    marginTop: 10,
+    marginBottom: 20,
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#666',
+  },
+  logo: {
+    height: 200, // Increased height for larger image
+    width: 250, 
+    padding: 10,
+    marginLeft:50,
+  },
+  buttonWrapper: {
+    marginTop: 10,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderRadius: 25,
+    padding: 10,
+    width: '80%',
+    alignSelf: 'center',
   },
   buttonContainer: {
-    marginTop: 20,
-    marginBottom: 30, // Ensures the logout button stays at the bottom
-    width: '60%',
+    marginTop: 30,
+    backgroundColor: '#ff6347',
+    borderRadius: 5,
+    padding: 10,
+    alignItems: 'center',
+  },
+  logoutButton: {
+    marginTop: 30,
+    backgroundColor: '#ff6347',
+    borderRadius: 5,
+    padding: 1,
   },
 });
+
+export default Welcome;
